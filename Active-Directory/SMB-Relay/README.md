@@ -69,8 +69,8 @@ This attack can be used in corporate environments where SMB signing is disabled.
 
 ## Screenshots
 
-![Responder Output](screenshots/responder.png)
-![NTLM Relay](screenshots/ntlmrelay.png)
+![Responder Output](../screenshots/responder.png)
+![NTLM Relay](../screenshots/ntlmrelay.png)
 
 ## Key Insight
 
