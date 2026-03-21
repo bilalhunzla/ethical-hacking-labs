@@ -1,5 +1,16 @@
 # SMB Relay Attack
 
+## Overview
+
+SMB Relay attack allows an attacker to capture NTLM authentication and relay it to another machine to gain access without cracking the password.
+
+## Lab Requirements
+
+- Kali Linux (Attacker)
+- Windows Machine (Target)
+- SMB Signing Disabled
+- Tools: Responder, Impacket (ntlmrelayx)
+
 ## Prerequisites
 
 - SMB signing disabled on target
@@ -54,6 +65,7 @@ This attack can be used in corporate environments where SMB signing is disabled.
 
 - Enable SMB signing
 - Disable NTLM authentication where possible
+- Use strong network segmentation
 
 ## Screenshots
 
@@ -63,3 +75,6 @@ This attack can be used in corporate environments where SMB signing is disabled.
 ## Key Insight
 
 This attack works because NTLM authentication can be relayed when SMB signing is not enforced.
+
+This attack does not require password cracking.
+It abuses trust in NTLM authentication.
