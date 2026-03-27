@@ -40,7 +40,9 @@ Modern Kali Linux blocks system-wide pip installations (PEP 668) to protect syst
 
 ## Running PlumHound
 
-python3 PlumHound.py --easy -p neo4j1
+```bash
+python3 PlumHound.py --easy -p <neo4j_password>
+```
 
 ## Result
 
