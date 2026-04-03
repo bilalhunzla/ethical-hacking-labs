@@ -106,13 +106,9 @@ psexec.py YOURDOMAIN.local/<USERNAME>:'<PASSWORD>'@<TARGET_IP>
 
 ## 📸 Screenshots
 
-_Add your screenshots here_
-
-```
 ![BloodHound](screenshots/bloodhound.png)
 ![SQLService](screenshots/sqlservice.png)
 ![Pwned](screenshots/pwned.png)
-```
 
 ---
 
