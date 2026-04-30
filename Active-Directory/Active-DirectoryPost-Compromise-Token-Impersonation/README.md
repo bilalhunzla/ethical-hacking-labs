@@ -157,38 +157,37 @@ impacket-secretsdump <DOMAIN_NAME>/testuser:'Password1@'@<DC_IP>
 
 Successfully extracted:
 
-Local SAM hashes
-LSA Secrets
-Domain user hashes
-Kerberos keys
-NTDS.dit database
+- Local SAM hashes
+- LSA Secrets
+- Domain user hashes
+- Kerberos keys
+- NTDS.dit database
 
 ### 🔥 Key Accounts Dumped
 
-Administrator
-krbtgt (🔥 Critical)
-SQLService
-<USER>
-testuser
+- Administrator
+- krbtgt (🔥 Critical)
+- SQLService -<USER>
+- testuser
 
 ### 🧠 Key Learnings
 
-Token impersonation can lead to full domain compromise
-SYSTEM access ≠ Domain Admin (token impersonation required)
-Modern Windows may block traditional tools (psexec)
-wmiexec is more stealthy and reliable
-Defender can break exploit chains
-Persistence via domain user creation is highly effective
+- Token impersonation can lead to full domain compromise
+- SYSTEM access ≠ Domain Admin (token impersonation required)
+- Modern Windows may block traditional tools (psexec)
+- wmiexec is more stealthy and reliable
+- Defender can break exploit chains
+- Persistence via domain user creation is highly effective
 
 ### 🛡️ Defense Recommendations
 
-Limit token impersonation privileges
-Implement account tiering (Tier 0 / Tier 1 / Tier 2)
-Never allow Domain Admin login on workstations
-Restrict local admin privileges
-Use LAPS for unique admin passwords
-Monitor suspicious account creation
-Enable logging for privilege escalation and token usage
+- Limit token impersonation privileges
+- Implement account tiering (Tier 0 / Tier 1 / Tier 2)
+- Never allow Domain Admin login on workstations
+- Restrict local admin privileges
+- Use LAPS for unique admin passwords
+- Monitor suspicious account creation
+- Enable logging for privilege escalation and token usage
 
 ### 📸 Screenshots
 
@@ -196,15 +195,15 @@ Enable logging for privilege escalation and token usage
 
 This lab demonstrates a complete Active Directory post-compromise attack chain:
 
-Initial access (WMI)
-Credential dumping
-Meterpreter access
-Token impersonation
-Domain Admin escalation
-Persistence (new admin user)
-Full domain credential dump
+- Initial access (WMI)
+- Credential dumping
+- Meterpreter access
+- Token impersonation
+- Domain Admin escalation
+- Persistence (new admin user)
+- Full domain credential dump
 
 ### 📎 Author
 
-GitHub: https://github.com/bilalhunzla
-LinkedIn: https://www.linkedin.com/in/hunzla-bilal
+- GitHub: https://github.com/bilalhunzla
+- LinkedIn: https://www.linkedin.com/in/hunzla-bilal
