@@ -78,8 +78,8 @@ Downloaded the files to the Windows target machine.
 
 For lab purposes only:
 
-Temporarily disabled Windows Security / Real-Time Protection
-Opened Command Prompt as Administrator
+- Temporarily disabled Windows Security / Real-Time Protection
+- Opened Command Prompt as Administrator
 
 # ⚡ Step 5 — Execute Mimikatz
 
@@ -105,36 +105,36 @@ Successfully dumped credentials and machine account information from LSASS memor
 
 Observed:
 
-Local user sessions
-Domain credentials
-NTLM hashes
-Kerberos-related data
-Machine account (SPIDERMAN-10$)
+- Local user sessions
+- Domain credentials
+- NTLM hashes
+- Kerberos-related data
+- Machine account (SPIDERMAN-10$)
 
 Example:
 
-Username : <USERNAME>
-Domain : <DOMAIN-NAME>
-Password : <PASSWORD>
+- Username : <USERNAME>
+- Domain : <DOMAIN-NAME>
+- Password : <PASSWORD>
 
 # 🧠 Concepts Demonstrated
 
-Active Directory authentication
-Credential dumping concepts
-LSASS memory access
-NTLM hash extraction
-Domain vs Local account differences
-Machine account visibility in Active Directory
+- Active Directory authentication
+- Credential dumping concepts
+- LSASS memory access
+- NTLM hash extraction
+- Domain vs Local account differences
+- Machine account visibility in Active Directory
 
 # ⚠️ Important Notice
 
 This work was performed:
 
-In an isolated lab
-On authorized virtual machines
-For defensive security learning and ethical hacking education only
+- In an isolated lab
+- On authorized virtual machines
+- For defensive security learning and ethical hacking education only
 
 ## 👨‍💻 Author
 
-🔗 GitHub: https://github.com/bilalhunzla
-🔗 LinkedIn: https://www.linkedin.com/in/hunzla-bilal
+- 🔗 GitHub: https://github.com/bilalhunzla
+- 🔗 LinkedIn: https://www.linkedin.com/in/hunzla-bilal
